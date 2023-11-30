@@ -21,11 +21,25 @@ class User:
         if not results:
             return False
         return results
-    
+
     @classmethod
-    def check_email(cls, data):
-        query = """SELECT email FROM users WHERE email = %(email)s;"""
+    def get_user_by_email(cls, data):
+        query = """SELECT * FROM users WHERE email = %(email)s;"""
         results = connectToMySQL(cls.db).query_db(query, data)
         if not results:
-            return True
-        return False
+            return False
+        return cls(results[0])
+        
+    
+    @staticmethod
+    def validate_user(data):
+        is_valid = True
+        user = User.get_user_by_email(data)
+        if user:
+            flash("Please use another email")
+            is_valid = False
+        if len(data['first_name']) < 2:
+            flash("First name must be atleast 2 characters long")
+            is_valid = False
+        
+        return is_valid
