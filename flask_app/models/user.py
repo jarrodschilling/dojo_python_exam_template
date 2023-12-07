@@ -5,7 +5,7 @@ import re
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 class User:
 # ------->>>>>-____ CHANGE THIS ----........>>>>>><<<<<<<
-    db = "prep_exam_schema"
+    db = "testing_login_schema"
 # ------->>>>>-____ CHANGE THIS ----........>>>>>><<<<<<<
     def __init__(self, data):
         self.id = data['id']
@@ -42,6 +42,16 @@ class User:
         if not results:
             return False
         return cls(results[0])
+    
+    @classmethod
+    def check_email(cls, data):
+        data = {
+            'email': data
+        }
+        query = """SELECT email FROM users WHERE email = %(email)s;"""
+        results = connectToMySQL(cls.db).query_db(query, data)
+        if len(results) > 1:
+            return True
         
     
 

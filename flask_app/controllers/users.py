@@ -7,12 +7,14 @@ bcrypt = Bcrypt(app)
 # Make sure the ROUTE is correct, sometimes the login isn't at index ('/')
 @app.route('/')
 def home():
-    return render_template('index.html')
+    form_data = session.pop('form_data', {})
+    return render_template('index.html', form_data=form_data)
 
 
 @app.route('/register', methods=['POST'])
 def register():
     if not User.validate_reg(request.form):
+        session['form_data'] = request.form
         return redirect('/')
     
     pw_hash = bcrypt.generate_password_hash(request.form['password'])
